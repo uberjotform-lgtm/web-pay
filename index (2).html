@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F6; --surface:#FFFFFF; --ink:#16203A; --muted:#5B6584;
+  --line:#D5DBE7; --accent:#2F4BD8; --accent-ink:#FFFFFF; --band:#16203A;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1526; --surface:#18203A; --ink:#E8ECF7; --muted:#9AA4C2;
+    --line:#2A3556; --accent:#7D93FF; --accent-ink:#0F1526; --band:#0A0F1D; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1526; --surface:#18203A; --ink:#E8ECF7; --muted:#9AA4C2;
+  --line:#2A3556; --accent:#7D93FF; --accent-ink:#0F1526; --band:#0A0F1D; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55}
+h1,h2,h3{font-family:"Bricolage Grotesque","Instrument Sans",system-ui,sans-serif;margin:0}
+a{color:inherit}
+img{max-width:100%}
+.band{background:var(--band);height:180px;position:relative;overflow:hidden}
+.band span{position:absolute;right:-2vw;bottom:-0.25em;font-family:"Bricolage Grotesque",sans-serif;
+  font-weight:700;font-size:clamp(5rem,16vw,13rem);color:rgba(255,255,255,.06);line-height:1;white-space:nowrap}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns:330px 1fr;gap:48px}
+.side{margin-top:-72px}
+.avatar{width:144px;height:144px;border-radius:50%;border:5px solid var(--bg);background:var(--accent);
+  color:var(--accent-ink);display:grid;place-items:center;font-family:"Bricolage Grotesque",sans-serif;
+  font-weight:700;font-size:3rem;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.side h1{font-size:2rem;line-height:1.15;margin:20px 0 20px}
+.facts{list-style:none;padding:0;margin:0 0 24px;display:grid;gap:14px}
+.facts li{display:grid;grid-template-columns:22px 1fr;gap:12px;align-items:start;font-size:.97rem}
+.facts svg{width:20px;height:20px;margin-top:2px;stroke:var(--muted);fill:none;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.facts a{text-decoration:none;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.facts .lbl{color:var(--muted)}
+.cta{display:block;width:100%;text-align:center;background:var(--accent);color:var(--accent-ink);
+  padding:14px;border-radius:12px;font-weight:600;text-decoration:none}
+.cta:focus-visible,.tabs button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.main{padding:28px 0 64px}
+.tabs{display:flex;gap:28px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{background:none;border:0;padding:12px 0;font:inherit;font-weight:600;color:var(--muted);
+  cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--ink)}
+.panel{padding-top:28px}
+.panel[hidden]{display:none}
+.bio{max-width:62ch;font-size:1.05rem;margin:0 0 32px}
+h2{font-size:1.35rem;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.pic{aspect-ratio:16/10;display:block;width:100%;object-fit:cover}
+.card .body{padding:16px 18px 20px}
+.card h3{font-size:1.1rem;margin-bottom:6px}
+.price{color:var(--accent);font-weight:600}
+.card p{margin:6px 0 0;color:var(--muted);font-size:.92rem}
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:0}
+  .band{height:140px}
+  .side{margin-top:-64px}
+}
+</style>
+</head>
+<body>
+<div class="band" aria-hidden="true"><span id="bandText"></span></div>
+<div class="wrap">
+  <aside class="side">
+    <div class="avatar" id="avatar"></div>
+    <h1 id="name"></h1>
+    <ul class="facts" id="facts"></ul>
+    <a class="cta" id="cta">Contact me</a>
+  </aside>
+  <main class="main">
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="work">Work</button>
+      <button role="tab" aria-selected="false" data-tab="services">Services</button>
+      <button role="tab" aria-selected="false" data-tab="about">About</button>
+    </div>
+    <section class="panel" id="work"><div class="grid" id="workGrid"></div></section>
+    <section class="panel" id="services" hidden><h2>Services</h2><div class="grid" id="svcGrid"></div></section>
+    <section class="panel" id="about" hidden><p class="bio" id="bio"></p></section>
+  </main>
+</div>
+
+<script>
+/* ===== عدّل البيانات دي لكل موظف =====
+   photo / image: سيبها "" عشان يظهر رسم جاهز،
+   أو حط اسم صورة مرفوعة جنب index.html زي "car.jpg"            */
+const PROFILE = {
+  name: "Benny Wijaya",
+  photo: "",
+  role: "Driver & Delivery Partner",
+  status: "Available for rides and deliveries",
+  email: "pa8yon108@outlook.sa",
+  phone: "+62 88809360420",
+  location: "TAMAN DADAP INDAH B 13 NO 9, RT 029 RW 008 KOSAMBI TIMUR KOSAMBI, Tangerang, 15213, Indonesia",
+  website: "",
+  bio: "Reliable driver offering city rides, airport transfers and on-time food and package delivery. Clean car, safe driving and friendly service.",
+  services: [
+    { title: "Uber ride service", price: "Fare by the app", note: "City trips and airport transfers in a clean, comfortable car.", art: "car", image: "" },
+    { title: "Food delivery", price: "Fare by the app", note: "Hot meals picked up and delivered fast.", art: "scooter", image: "" },
+    { title: "Package delivery", price: "From US$5", note: "Same-day delivery of documents and parcels.", art: "box", image: "" }
+  ],
+  work: [
+    { title: "Airport transfers", tag: "Rides", art: "plane", image: "" },
+    { title: "City trips", tag: "Rides", art: "car", image: "" },
+    { title: "Food orders", tag: "Delivery", art: "scooter", image: "" },
+    { title: "Parcels & documents", tag: "Delivery", art: "box", image: "" }
+  ]
+};
+/* ===================================== */
+
+const ICONS = {
+  status:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h4"/>',
+  role:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+  email:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  location:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  website:'<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/>'
+};
+
+/* رسومات جاهزة بدل الصور */
+const ART = {
+  car:['#2F4BD8','#0E1A55',`
+    <rect x="70" y="118" width="180" height="40" rx="12" fill="#fff"/>
+    <path d="M100 118l22-30h76l26 30z" fill="#fff"/>
+    <path d="M128 92h30v24h-50zM164 92h30l18 24h-48z" fill="#9FB2FF"/>
+    <circle cx="112" cy="160" r="15" fill="#16203A"/><circle cx="112" cy="160" r="6" fill="#ccd"/>
+    <circle cx="210" cy="160" r="15" fill="#16203A"/><circle cx="210" cy="160" r="6" fill="#ccd"/>
+    <rect x="236" y="128" width="12" height="7" rx="3" fill="#FFD25A"/>`],
+  scooter:['#0F7A6B','#073A33',`
+    <rect x="92" y="74" width="54" height="46" rx="6" fill="#FFB547"/>
+    <path d="M100 92h38" stroke="#073A33" stroke-width="4"/>
+    <path d="M96 128h80l22-46h18" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M150 128h60" stroke="#fff" stroke-width="16" stroke-linecap="round"/>
+    <circle cx="104" cy="156" r="17" fill="#16203A" stroke="#fff" stroke-width="5"/>
+    <circle cx="214" cy="156" r="17" fill="#16203A" stroke="#fff" stroke-width="5"/>`],
+  box:['#8A4B1F','#3B1E0A',`
+    <path d="M160 58l66 30v72l-66 30-66-30V88z" fill="#E7B47A"/>
+    <path d="M160 118l66-30M160 118L94 88M160 118v72" stroke="#8A4B1F" stroke-width="4" fill="none"/>
+    <path d="M127 73l66 30v20" stroke="#fff" stroke-width="9" fill="none"/>`],
+  plane:['#6A2BD9','#2A0F66',`
+    <path d="M70 128l170-46c14-4 22 8 10 16l-150 56-24-6 40-20-46-6z" fill="#fff"/>
+    <path d="M150 104l-40-40h18l58 30z" fill="#C9B6FF"/>
+    <path d="M60 176h200" stroke="#fff" stroke-opacity=".35" stroke-width="4" stroke-dasharray="14 10"/>`]
+};
+const artSvg = key => {
+  const [a,b,shapes] = ART[key] || ART.box;
+  const id = 'g' + Math.random().toString(36).slice(2,7);
+  return `<svg class="pic" viewBox="0 0 320 200" role="img" aria-hidden="true">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>
+    <rect width="320" height="200" fill="url(#${id})"/>${shapes}</svg>`;
+};
+const visual = item => item.image ? `<img class="pic" src="${item.image}" alt="${item.title}">` : artSvg(item.art);
+
+const $ = id => document.getElementById(id);
+const initials = PROFILE.name.split(/\s+/).map(w => w[0]).slice(0,2).join("").toUpperCase();
+document.title = PROFILE.name + " – Portfolio";
+$("avatar").innerHTML = PROFILE.photo ? `<img src="${PROFILE.photo}" alt="${PROFILE.name}">` : initials;
+$("bandText").textContent = PROFILE.name;
+$("name").textContent = PROFILE.name;
+$("bio").textContent = PROFILE.bio;
+$("cta").href = "mailto:" + PROFILE.email;
+
+const rows = [
+  ["status", PROFILE.status],
+  ["role", PROFILE.role],
+  ["email", PROFILE.email, "mailto:" + PROFILE.email, "Email: "],
+  ["phone", PROFILE.phone, "tel:" + PROFILE.phone.replace(/\s/g,""), "Phone: "],
+  ["location", PROFILE.location],
+  ["website", PROFILE.website, PROFILE.website]
+].filter(r => r[1]);
+$("facts").innerHTML = rows.map(([icon,val,href,label]) => `
+  <li><svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[icon]}</svg>
+  <span>${label ? `<span class="lbl">${label}</span>` : ""}${href ? `<a href="${href}">${val}</a>` : val}</span></li>`).join("");
+
+$("svcGrid").innerHTML = PROFILE.services.map(s => `
+  <article class="card">${visual(s)}
+    <div class="body"><h3>${s.title}</h3><div class="price">${s.price}</div><p>${s.note}</p></div>
+  </article>`).join("");
+$("workGrid").innerHTML = PROFILE.work.map(w => `
+  <article class="card">${visual(w)}
+    <div class="body"><h3>${w.title}</h3><p>${w.tag}</p></div>
+  </article>`).join("");
+
+document.querySelectorAll(".tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b === btn));
+    document.querySelectorAll(".panel").forEach(p => p.hidden = p.id !== btn.dataset.tab);
+  });
+});
+</script>
+</body>
+</html>
